@@ -1,0 +1,105 @@
+--[[ 
+    👑 ANHTUSIBIDI - VERSION 10.0 FINAL (FIXED)
+    PROTECTED BY VARIABLE MAPPING
+]]
+
+local lIIlIlIlIIlI = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Cấu hình bảo mật
+local IIllIIlllIIl = Vector3.new(168, 26, 73)
+local lIllIIlIIlII = game:GetService("VirtualInputManager")
+local lIIlllIIllII = game:GetService("UserInputService")
+local IllIIllIIlll = not lIIlllIIllII.TouchEnabled
+
+local lIIlIIllIIll = {}
+_G.AutoLucky = false
+_G.AntiBan = false 
+_G.AutoSell = false
+_G.IsSelling = false 
+_G.Active = false
+
+-- Khởi tạo Menu
+local Window = lIIlIlIlIIlI:CreateWindow({
+   Name = "👑 Script Anhtusibidi 👑",
+   LoadingTitle = "Đang kiểm tra...",
+   LoadingSubtitle = "by Anhtusibidi - v10.0",
+   ConfigurationSaving = {Enabled = false}
+})
+
+-- Hàm xử lý Click (Đã giấu tên)
+local function lIlIlIlIlIlI(target, offset)
+    if not target or _G.IsSelling then return end
+    local yOff = IllIIllIIlll and 35 or 60 
+    local jitter = math.random(-5, 5)
+    lIllIIlIIlII:SendMouseButtonEvent(target.AbsolutePosition.X + offset + jitter, target.AbsolutePosition.Y + offset + yOff + jitter, 0, true, game, 0)
+    task.wait(0.05)
+    lIllIIlIIlII:SendMouseButtonEvent(target.AbsolutePosition.X + offset + jitter, target.AbsolutePosition.Y + offset + yOff + jitter, 0, false, game, 0)
+end
+
+-- Hàm bán hàng (Đã giấu tên)
+local function IIllIIllIIll()
+    if _G.IsSelling then return end
+    _G.IsSelling = true 
+    local p = game.Players.LocalPlayer
+    local h = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+    if h then
+        local old = h.CFrame
+        h.CFrame = CFrame.new(IIllIIlllIIl)
+        task.wait(0.8)
+        pcall(function()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("ProximityPrompt") then
+                    local dist = (v.Parent.Position - IIllIIlllIIl).Magnitude
+                    if dist < 15 then fireproximityprompt(v) break end
+                end
+            end
+        end)
+        task.wait(1.2)
+        for _, v in pairs(p.PlayerGui:GetDescendants()) do
+            if v:IsA("TextButton") or v:IsA("ImageButton") then
+                local t = (v:IsA("TextButton") and v.Text or v.Name):lower()
+                if t:find("sell") or t:find("all") or t:find("bán") then
+                    pcall(function()
+                        for _, c in pairs(getconnections(v.MouseButton1Click)) do c:Fire() end
+                    end)
+                end
+            end
+        end
+        task.wait(0.5)
+        h.CFrame = old
+    end
+    _G.IsSelling = false
+end
+
+-- Tạo Tabs
+local Tab1 = Window:CreateTab("📍 Vị Trí", 4483362458)
+local Tab2 = Window:CreateTab("💰 Bán Cá", 4483362458)
+
+Tab1:CreateToggle({
+    Name = "Hiện Ô Câu Cá",
+    CurrentValue = false,
+    Callback = function(v)
+        if v then
+            local f = Instance.new("Frame", game.CoreGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui", game.CoreGui))
+            f.Size = UDim2.new(0, 50, 0, 50); f.Position = UDim2.new(0.5, 0, 0.5, 0); f.BackgroundColor3 = Color3.new(1, 1, 0); f.Draggable = true
+            lIIlIIllIIll["Fish"] = f
+        else
+            if lIIlIIllIIll["Fish"] then lIIlIIllIIll["Fish"]:Destroy() end
+        end
+    end
+})
+
+Tab2:CreateToggle({Name = "Auto Bán Khi Đầy", CurrentValue = false, Callback = function(v) _G.AutoSell = v end})
+Tab2:CreateButton({Name = "Bán Ngay", Callback = function() IIllIIllIIll() end})
+
+-- Luồng thực thi ngầm
+task.spawn(function()
+    while true do
+        task.wait(0.1)
+        if _G.Active and not _G.IsSelling then
+            if lIIlIIllIIll["Fish"] then lIlIlIlIlIlI(lIIlIIllIIll["Fish"], 25) end
+        end
+    end
+end)
+
+lIIlIlIlIIlI:Notify({Title = "Thành Công", Content = "Script Anhtusibidi đã sẵn sàng!", Duration = 3})
