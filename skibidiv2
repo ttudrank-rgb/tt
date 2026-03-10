@@ -1,0 +1,178 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- [KHỞI TẠO CỬA SỔ]
+local Window = Rayfield:CreateWindow({
+   Name = "👑 Script Anhtusibidi👑",
+   LoadingTitle = "Đang kiểm tra bảo mật hệ thống...",
+   LoadingSubtitle = "by Anhtusibidi - v10.0 Final Security",
+   ConfigurationSaving = {Enabled = false},
+   KeySystem = false
+})
+
+-- [BIẾN HỆ THỐNG]
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local StartGui = Instance.new("ScreenGui", game.CoreGui)
+local Targets = {}
+local vim = game:GetService("VirtualInputManager")
+local UIS = game:GetService("UserInputService")
+local isPC = not UIS.TouchEnabled
+
+local _G_AutoLucky = false
+local _G_AntiBanMode = false 
+local _G_AutoSellNotice = false
+local _G_IsSelling = false 
+local _G_Running = false
+
+local sellPos = Vector3.new(168, 26, 73)
+
+-- ==========================================
+-- HÀM CLICK BẢO MẬT
+-- ==========================================
+local function superSafeClick(target, offset)
+    if not target or not target.Parent or _G_IsSelling then return end
+    local yOffset = isPC and 35 or 60 
+    local jitter = _G_AntiBanMode and math.random(-12, 12) or math.random(-5, 5)
+    local rx = target.AbsolutePosition.X + offset + jitter
+    local ry = target.AbsolutePosition.Y + offset + yOffset + jitter
+    
+    vim:SendMouseButtonEvent(rx, ry, 0, true, game, 0)
+    task.wait(math.random(20, 50)/1000)
+    vim:SendMouseButtonEvent(rx, ry, 0, false, game, 0)
+end
+
+-- ==========================================
+-- HÀM BÁN CÁ
+-- ==========================================
+local function autoSellProcess()
+    if _G_IsSelling then return end
+    _G_IsSelling = true 
+    
+    local player = game.Players.LocalPlayer
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    
+    if hrp then
+        local oldPos = hrp.CFrame
+        Rayfield:Notify({Title = "Hệ thống", Content = "Đang đi bán cá...", Duration = 2})
+        
+        hrp.CFrame = CFrame.new(sellPos)
+        task.wait(0.8)
+
+        local opened = false
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("ProximityPrompt") then
+                local pPos = v.Parent:IsA("BasePart") and v.Parent.Position or (v.Parent:IsA("Model") and v.Parent.PrimaryPart and v.Parent.PrimaryPart.Position)
+                if pPos and (pPos - Vector3.new(168, 24, 73)).Magnitude < 15 then 
+                    fireproximityprompt(v)
+                    opened = true; break 
+                end
+            end
+        end
+        
+        if not opened then 
+            vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+            task.wait(0.1)
+            vim:SendKeyEvent(false, Enum.KeyCode.E, false, game) 
+        end
+        
+        task.wait(1.2)
+
+        for _, v in pairs(player.PlayerGui:GetDescendants()) do
+            if v:IsA("TextButton") or v:IsA("ImageButton") then
+                local text = string.lower((v:IsA("TextButton") and v.Text) or (v:FindFirstChildOfClass("TextLabel") and v:FindFirstChildOfClass("TextLabel").Text) or v.Name)
+                if string.find(text, "sell") or string.find(text, "all") or string.find(text, "bán") then
+                    pcall(function()
+                        for _, c in pairs(getconnections(v.MouseButton1Click)) do c:Fire() end
+                        for _, c in pairs(getconnections(v.Activated)) do c:Fire() end
+                    end)
+                end
+            end
+        end
+        
+        task.wait(0.5)
+        hrp.CFrame = oldPos
+        task.wait(0.5)
+    end
+    _G_IsSelling = false
+end
+
+-- ==========================================
+-- HÀM FIX LAG & ANTI-ULTIMATE
+-- ==========================================
+local function NuclearOptimize()
+    local function Clean(obj)
+        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") or 
+           obj:IsA("Fire") or obj:IsA("Smoke") or obj:IsA("Sparkles") or 
+           obj:IsA("Explosion") or obj:IsA("Highlight") or obj:IsA("PointLight") then
+            obj:Destroy()
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
+            obj:Destroy()
+        elseif obj:IsA("Part") or obj:IsA("MeshPart") then
+            obj.Material = Enum.Material.Plastic
+            obj.Reflectance = 0
+            obj.CastShadow = false
+        end
+    end
+    for _, v in pairs(game:GetDescendants()) do Clean(v) end
+    Rayfield:Notify({Title = "Anhtusibidi👑", Content = "Đã dọn sạch hiệu ứng & Fix Lag!", Duration = 3})
+end
+
+-- [LẮNG NGHE FULL KHO ĐỒ]
+game.Players.LocalPlayer.PlayerGui.DescendantAdded:Connect(function(d)
+    if _G_AutoSellNotice and d:IsA("TextLabel") then
+        task.wait(0.3)
+        local t = string.lower(d.Text)
+        if (string.find(t, "full") or string.find(t, "đầy") or string.find(t, "inventory")) then
+            autoSellProcess()
+        end
+    end
+end)
+
+-- [NÚT START TRÊN MÀN HÌNH]
+local StartBtn = Instance.new("TextButton", StartGui)
+StartBtn.Size = UDim2.new(0, 110, 0, 45)
+StartBtn.Position = UDim2.new(0.5, -55, 0.05, 0)
+StartBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+StartBtn.Text = "KÍCH HOẠT"
+StartBtn.Visible = false
+StartBtn.Active = true
+StartBtn.Draggable = true
+Instance.new("UICorner", StartBtn)
+
+StartBtn.MouseButton1Click:Connect(function()
+    _G_Running = not _G_Running
+    StartBtn.Text = _G_Running and "🔴 STOP" or "🟢 START"
+    StartBtn.BackgroundColor3 = _G_Running and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(0, 170, 255)
+    
+    if _G_Running then
+        task.spawn(function()
+            while _G_Running do
+                if not _G_IsSelling then
+                    local delay = math.random(10, 18) / 100
+                    if Targets["Fish"] then superSafeClick(Targets["Fish"], 25) end
+                    task.wait(delay)
+                    
+                    if _G_AutoLucky then
+                        vim:SendKeyEvent(true, Enum.KeyCode.L, false, game)
+                        task.wait(0.01)
+                        vim:SendKeyEvent(false, Enum.KeyCode.L, false, game)
+                    end
+
+                    for _, s in ipairs({"Z", "X", "C", "V"}) do
+                        if not _G_Running or _G_IsSelling then break end
+                        if Targets[s] then superSafeClick(Targets[s], 17) task.wait(delay) end
+                    end
+                else
+                    task.wait(1)
+                end
+                task.wait(0.01)
+            end
+        end)
+    end
+end)
+
+-- [TABS MENU]
+local MainTab = Window:CreateTab("📍 Vị Trí", 4483362458)
+local SellTab = Window:CreateTab("💰 Bán Hàng", 4483362458)
+local SettingsTab = Window:CreateTab("⚙️ Hệ Thống", 4483362458)
+
+local function createTarget(name, size, pos, color
