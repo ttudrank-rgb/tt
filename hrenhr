@@ -1,0 +1,87 @@
+--[[ 
+    ANHTUSIBIDI V36 - RE-FIXED
+    Protected by Logic Encryption
+]]
+local a,b,c,d = "Communication", "Functions", "HumanoidRootPart", "PlayerGui"
+local e = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local f = Vector3.new(168, 24, 73)
+_G.AutoSellOnNotice = false
+
+local g = e:CreateWindow({
+    Name = "Anhtusibidi VIP V36",
+    LoadingTitle = "Titan Fishing Fixed",
+    LoadingSubtitle = "by Anhtu",
+    ConfigurationSaving = {Enabled = false}
+})
+
+local function h()
+    local i = game.Players.LocalPlayer
+    local j = i.Character and i.Character:FindFirstChild(c)
+    if j then
+        local k = j.CFrame
+        j.CFrame = CFrame.new(f + Vector3.new(0, 3, 0))
+        task.wait(0.8)
+        pcall(function()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("ProximityPrompt") and (v.Parent.Position - f).Magnitude < 15 then
+                    fireproximityprompt(v)
+                    break
+                end
+            end
+        end)
+        task.wait(1)
+        pcall(function()
+            for _, v in pairs(i[d]:GetDescendants()) do
+                if v:IsA("TextButton") or v:IsA("ImageButton") then
+                    local t = (v:IsA("TextButton") and v.Text or v.Name):lower()
+                    if t:find("sell") or t:find("all") or t:find("bán") then
+                        for _, ev in pairs({"MouseButton1Click", "Activated"}) do
+                            for _, con in pairs(getconnections(v[ev])) do con:Fire() end
+                        end
+                    end
+                end
+            end
+        end)
+        task.wait(1)
+        j.CFrame = k
+    end
+end
+
+-- LUỒNG DỌN CHỮ ĐỎ (CẢI TIẾN)
+task.spawn(function()
+    while true do
+        task.wait(0.3)
+        pcall(function()
+            for _, v in pairs(game.Players.LocalPlayer[d]:GetDescendants()) do
+                if v:IsA("TextLabel") then
+                    local t = v.Text:lower()
+                    if t:find("bi huynh") or t:find("island") or t:find("invalid") then
+                        v.Parent:Destroy()
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+local l = g:CreateTab("Auto Farm", nil)
+l:CreateToggle({
+    Name = "Auto Sell (Khi đầy túi)",
+    CurrentValue = false,
+    Callback = function(v) _G.AutoSellOnNotice = v end,
+})
+l:CreateButton({
+    Name = "Manual Sell (Bán ngay)",
+    Callback = function() h() end,
+})
+
+-- CHECK FULL TÚI ĐỂ TELE
+game.Players.LocalPlayer[d].DescendantAdded:Connect(function(m)
+    if _G.AutoSellOnNotice and m:IsA("TextLabel") then
+        task.wait(0.2)
+        local txt = m.Text:lower()
+        if (txt:find("full") or txt:find("đầy")) and m.TextColor3.r > 0.7 then
+            h()
+        end
+    end
+end)
