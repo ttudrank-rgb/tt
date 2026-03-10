@@ -1,0 +1,95 @@
+--[[ 
+    👑 ANHTUSIBIDI - VERSION 10.0 FINAL 
+    [PROTECTED BY ANHTU ENCRYPTION]
+    Contact: Anhtu
+]]
+
+local _0x726179 = loadstring(game:HttpGet(('\104\116\116\112\115\58\47\47\115\105\114\105\117\115\46\109\101\110\117\47\114\97\121\102\105\101\108\100')))()
+local _0x53656c = Vector3.new(168, 26, 73)
+local _0x56696d = game:GetService('\86\105\114\116\117\97\108\73\110\112\117\116\77\97\110\97\103\101\114')
+local _0x554953 = game:GetService('\85\115\101\114\73\110\112\117\116\83\101\114\118\105\99\101')
+
+local _0x57696e = _0x726179:CreateWindow({
+   Name = "\240\159\145\145 \83\99\114\105\112\116\32\65\110\104\116\117\115\105\98\105\100\105\240\159\145\145",
+   LoadingTitle = "\271\144\173\110\103\32\107\105\225\187\131\109\32\116\114\97\32\98\225\186\163\111\32\109\225\187\173\116\46\46\46",
+   LoadingSubtitle = "by Anhtusibidi - v10.0 Final",
+   ConfigurationSaving = {Enabled = false}
+})
+
+-- [MÃ HOÁ CÁC BIẾN HỆ THỐNG]
+local _0x546172, _0x417574, _0x52756e, _0x53656c6c = {}, false, false, false
+local _0x497350\67 = not _0x554953.TouchEnabled
+
+local function _0x436c69(t, o)
+    if not t or _0x53656c6c then return end
+    local y = _0x497350\67 and 35 or 60
+    local j = math.random(-8, 8)
+    _0x56696d:SendMouseButtonEvent(t.AbsolutePosition.X+o+j, t.AbsolutePosition.Y+o+y+j, 0, true, game, 0)
+    task.wait(0.03)
+    _0x56696d:SendMouseButtonEvent(t.AbsolutePosition.X+o+j, t.AbsolutePosition.Y+o+y+j, 0, false, game, 0)
+end
+
+local function _0x53656c6c50()
+    if _0x53656c6c then return end
+    _0x53656c6c = true
+    local p = game.Players.LocalPlayer
+    local h = p.Character and p.Character:FindFirstChild('\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116')
+    if h then
+        local o = h.CFrame
+        h.CFrame = CFrame.new(_0x53656c)
+        task.wait(1)
+        pcall(function()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA('\80\114\111\120\105\109\105\116\121\80\114\111\109\112\116') then
+                    fireproximityprompt(v)
+                end
+            end
+        end)
+        task.wait(1.5)
+        for _, v in pairs(p.PlayerGui:GetDescendants()) do
+            if v:IsA('\84\101\120\116\66\117\116\116\111\110') then
+                local tx = v.Text:lower()
+                if tx:find('\115\101\108\108') or tx:find('\98\225\187\161\110') then
+                    for _, c in pairs(getconnections(v.MouseButton1Click)) do c:Fire() end
+                end
+            end
+        end
+        h.CFrame = o
+    end
+    _0x53656c6c = false
+end
+
+-- [TABS & UI]
+local T1 = _0x57696e:CreateTab("\240\159\141\141\32\86\225\187\139\32\84\114\237\173\141", 4483362458)
+local T2 = _0x57696e:CreateTab("\240\159\146\176\32\66\225\187\133\110\32\72\224\187\160\110\103", 4483362458)
+
+T1:CreateToggle({
+    Name = "\226\150\182\32\226\150\182\32\67\226\130\172\117\32\67\195\161",
+    CurrentValue = false,
+    Callback = function(v)
+        if v then
+            local f = Instance.new("Frame", game.CoreGui:FindFirstChild('\83\99\114\101\101\110\71\117\105') or Instance.new("ScreenGui", game.CoreGui))
+            f.Size = UDim2.new(0,50,0,50); f.Position = UDim2.new(0.5,0,0.5,0); f.BackgroundColor3 = Color3.new(1,1,0); f.Draggable = true; _0x546172["Fish"] = f
+        else
+            if _0x546172["Fish"] then _0x546172["Fish"]:Destroy() end
+        end
+    end
+})
+
+T2:CreateToggle({Name = "\84\225\187\177\32\273\225\187\153\110\103\32\98\195\161\32\107\104\105\32\273\225\187\167\121", CurrentValue = false, Callback = function(v) _G_AutoSellNotice = v end})
+T2:CreateButton({Name = "\66\195\141\101\32\78\71\65\89", Callback = function() _0x53656c6c50() end})
+
+local S1 = _0x57696e:CreateTab("\226\154\153\239\184\143\32\72\225\187\135\32\84\104\225\187\145\110\103")
+S1:CreateButton({Name = "\67\72\225\187\144\101\78\71\32\65\70\75", Callback = function() 
+    game.Players.LocalPlayer.Idled:Connect(function() game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame) end)
+end})
+
+-- [PHẦN QUAN TRỌNG: CHẠY NGẦM]
+task.spawn(function()
+    while true do
+        task.wait(0.1)
+        if _G_Running and not _0x53656c6c then
+            if _0x546172["Fish"] then _0x436c69(_0x546172["Fish"], 25) end
+        end
+    end
+end)
